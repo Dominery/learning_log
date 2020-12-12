@@ -6,8 +6,8 @@ from learning_logs.models import Topic, Entry
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ['text']
-        labels = {'text':''}
+        fields = ['text','brief']
+        labels = {'text':'','brief':''}
 
 
 class EntryForm(forms.ModelForm):

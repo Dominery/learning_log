@@ -1,32 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% extends 'learning_logs/base.html' %}
+
     <meta charset="UTF-8">
-    <title>{{ topic }}</title>
+    <title> view topic </title>
+        <style>
+        .card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid rgba(0,0,0,.125);
+            border-radius: .25rem;
+            margin-bottom: 4rem;
+            }
+        .card-body {
+            flex: 1 1 auto;
+            padding: 0 1rem 1rem 1rem;
+            }
+        .card-header {
+            padding: .5rem 1rem;
+            margin-top: 0;
+            background-color: rgba(0,0,0,.03);
+            border-bottom: 1px solid rgba(0,0,0,.125);
+            }
+        .little-card-text{
+            height: 3rem;
+        }
+        .col-sm-4{
+            text-align: center;
+        }
+        .little-card-title {
+	        margin-bottom: .5rem;
+            margin-top:0;
+            font-size: 12px;
+            text-align: right;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
+    {% extends 'learning_logs/base.html' %}
     {% block header %}
         <h2>{{ topic }}</h2>
     {% endblock header %}
     {% block content %}
-        <p>
-            <a href="{% url 'learning_logs:new_entry' topic.id %}">add new entry</a>
-        </p>
+        <div class="card">
+          <div class="card-header">
+            Add a new entry
+          </div>
+          <div class="card-body">
+            <p class="card-text">want to say something with the topic,try to add a new one.</p>
+             <a href="{% url 'learning_logs:new_entry' topic.id %}" class="btn btn-primary">Add</a>
+          </div>
+        </div>
         {% for entry in entries %}
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3>
-                        {{ entry.date_added|date:'M d, Y H:i' }}
+               <div class="col-sm-4">
+                <div class="card" style="width: 18rem;"  >
+                    <h5 class="card-header">{{ entry.owner }}
+                        {% if user.username == entry.owner %}
                         <small>
                             <a href="{% url 'learning_logs:edit_entry' entry.id %}">edit entry</a>
                         </small>
-                    </h3>
+                        {% endif %}
+                    </h5>
+                  <div class="card-body">
+                    <p class="little-card-text">{{ entry.text }}</p>
+                     <div class="card-footer">
+                      <small class="text-muted">{{ entry.date_added|date:'M d, Y H' }}</small>
+                    </div>
+                  </div>
                 </div>
-                <div class="panel-body">
-                    {{ entry.text|linebreaks }}
-                </div>
-            </div>
+               </div>
         {% empty %}
                 There are no entries for this topic.
         {% endfor %}

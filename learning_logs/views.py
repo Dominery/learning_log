@@ -5,7 +5,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse
 
-from learning_logs.check import check_topic_owner
+from learning_logs.check import check_topic_owner, check_entry_owner
 from learning_logs.forms import TopicForm, EntryForm
 from learning_logs.models import Topic, Entry
 
@@ -67,7 +67,7 @@ def new_entry(request, topic_id):
 def edit_entry(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
-    check_topic_owner(request,topic)
+    check_entry_owner(request,entry)
     if request.method != 'POST':
         form = EntryForm(instance=entry)
     else:
