@@ -5,7 +5,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse
 
-from learning_logs.check import check_topic_owner, check_entry_owner
+from learning_logs.check import check_topic_owner, check_entry_owner, check_topic_public
 from learning_logs.forms import TopicForm, EntryForm
 from learning_logs.models import Topic, Entry
 
@@ -16,7 +16,7 @@ def index(request):
 
 @login_required
 def topics(request):
-    topics = Topic.objects.filter(owner=request.user).order_by('date_added')
+    topics = Topic.objects.filter(public=1).order_by('date_added')
     context = {'topics': topics}
     return render(request, 'learning_logs/topics.html', context)
 
@@ -24,7 +24,7 @@ def topics(request):
 @login_required
 def topic(request, id):
     topic = Topic.objects.get(id=id)
-    check_topic_owner(request,topic)
+    check_topic_public(request,topic)
     entries = topic.entry_set.order_by('-date_added')
     context = {'topic': topic, 'entries': entries}
     return render(request, 'learning_logs/topic.html', context)
@@ -51,11 +51,12 @@ def new_entry(request, topic_id):
     if request.method != 'POST':
         form = EntryForm()
     else:
-        check_topic_owner(request,topic)
+        check_topic_public(request,topic)
         form = EntryForm(data=request.POST)
         if form.is_valid():
             new_entry = form.save(commit=False)
             new_entry.topic = topic
+            new_entry.owner = request.user
             new_entry.save()
             return HttpResponseRedirect(reverse('learning_logs:topic',
                                                 args=[topic_id]))
@@ -86,3 +87,10 @@ def page_not_found(request,exception):
 
 def page_error(request,*exception):
     return render(request,'learning_logs/500.html')
+
+
+@login_required
+def personal_topic(request):
+    personal_topics = Topic.objects.filter(owner=request.user).order_by('date_added')
+    context = {'personal_topics':personal_topics}
+    return render(request,'learning_logs/personal_topic.html',context)

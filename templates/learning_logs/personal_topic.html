@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
-    <title> view topic </title>
+    <title>personal_topic</title>
         <style>
         .card {
             position: relative;
@@ -28,7 +27,7 @@
             border-bottom: 1px solid rgba(0,0,0,.125);
             }
         .little-card-text{
-            height: 15rem;
+            height: 80px;
         }
         .col-sm-4{
             text-align: center;
@@ -45,40 +44,40 @@
 <body>
     {% extends 'learning_logs/base.html' %}
     {% block header %}
-        <h2>{{ topic }}</h2>
+        <h1>Personal Topics</h1>
     {% endblock header %}
     {% block content %}
         <div class="card">
           <div class="card-header">
-            Add a new entry
+            Add a new topic
           </div>
           <div class="card-body">
-            <p class="card-text">want to say something with the topic,try to add a new one.</p>
-             <a href="{% url 'learning_logs:new_entry' topic.id %}" class="btn btn-primary">Add</a>
+            <p class="card-text">try to add a new one you want to keep it secret.</p>
+            <a href="{% url 'learning_logs:new_topic' %}" class="btn btn-primary">Add</a>
           </div>
         </div>
-        {% for entry in entries %}
-               <div class="col-sm-4">
+        {% for topic in personal_topics %}
+             <div class="col-sm-4">
                 <div class="card" style="width: 18rem;"  >
-                    <h5 class="card-header">{{ entry.owner }}
-                        {% ifequal request.user entry.owner %}
-                        <small>
-                            <a href="{% url 'learning_logs:edit_entry' entry.id %}">edit entry</a>
-                        </small>
-                        {% endifequal %}
-                    </h5>
+                    <h5 class="card-header">{{ topic }}</h5>
                   <div class="card-body">
-                    <p class="little-card-text">{{ entry.text }}</p>
+                      {% if topic.public %}
+                      <p class="little-card-title"> public</p>
+                      {% else %}
+                      <p class="little-card-title"> private</p>
+                      {% endif %}
+                    <p class="little-card-text"><a href="{% url 'learning_logs:topic' topic.id %}" >{{ topic.brief }}</a></p>
                      <div class="card-footer">
-                      <small class="text-muted">{{ entry.date_added|date:'M d H, Y ' }}</small>
+                      <small class="text-muted">{{ topic.date_added|date:'M d, Y' }}</small>
                     </div>
                   </div>
                 </div>
-               </div>
-        {% empty %}
-                There are no entries for this topic.
-        {% endfor %}
-    {% endblock content %}
 
+             </div>
+        {% empty %}
+        No topic have been added yet
+        {% endfor %}
+
+     {% endblock content %}
 </body>
 </html>

@@ -130,3 +130,4 @@ LOGIN_URL = '/user/login/'
 BOOTSTRAP3 = {
     'include_jquery':True,
 }
+
